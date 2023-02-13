@@ -30,6 +30,7 @@ const account4 = {
 const accounts = [account1, account2, account3, account4]; // to manipulate data as a json.
 
 const containerMovements = document.querySelector(".movements");
+const labelBalance = document.querySelector(".balance__value");
 
 const displayMovements = function (movements) {
   movements.forEach(function (mov, index) {
@@ -66,3 +67,12 @@ const createUsernames = function (user) {
 accounts.forEach(function (account) {
   account["username"] = createUsernames(account.owner);
 });
+
+const calcDisplayBalance = function (movements) {
+  const balance = movements.reduce(function (acc, currentValue) {
+    return acc + currentValue;
+  }, 0);
+  labelBalance.textContent = `${balance} €`;
+};
+
+calcDisplayBalance(account1.movements);
