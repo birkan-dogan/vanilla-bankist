@@ -49,3 +49,20 @@ const displayMovements = function (movements) {
 };
 
 displayMovements(account1.movements);
+
+// to create a username for each account like this "Steven Thomas Williams" -> stw
+
+const createUsernames = function (user) {
+  const username = user
+    .toLowerCase()
+    .split(" ")
+    .map((name) => name[0])
+    .join("");
+  return username;
+};
+
+// console.log(createUsernames("Steven Thomas Williams"));  // stw
+
+accounts.forEach(function (account) {
+  account["username"] = createUsernames(account.owner);
+});
