@@ -29,6 +29,7 @@ const account4 = {
 
 const accounts = [account1, account2, account3, account4]; // to manipulate data as a json.
 
+const containerApp = document.querySelector(".app");
 const containerMovements = document.querySelector(".movements");
 const labelBalance = document.querySelector(".balance__value");
 const labelSumIn = document.querySelector(".summary__value--in");
@@ -51,8 +52,6 @@ const displayMovements = function (movements) {
     containerMovements.insertAdjacentHTML("afterbegin", html);
   });
 };
-
-displayMovements(account1.movements);
 
 // to create a username for each account like this "Steven Thomas Williams" -> stw
 
@@ -78,30 +77,64 @@ const calcDisplayBalance = function (movements) {
   labelBalance.textContent = `${balance} €`;
 };
 
-calcDisplayBalance(account1.movements);
-
-calcDisplaySummary = function (movements) {
-  const incomes = movements
+calcDisplaySummary = function (account) {
+  const incomes = account.movements
     .filter((mov) => mov > 0)
     .reduce(function (acc, currentValue) {
       return acc + currentValue;
     }, 0);
   labelSumIn.textContent = `${incomes}€`;
 
-  const outcomes = movements
+  const outcomes = account.movements
     .filter((mov) => mov < 0)
     .reduce(function (acc, currentValue) {
       return acc + currentValue;
     }, 0);
   labelSumOut.textContent = `${Math.abs(outcomes)}€`;
 
-  const interest = movements
+  const interest = account.movements
     .filter((mov) => mov > 0)
-    .map((deposit) => (deposit * 1.2) / 100)
+    .map((deposit) => (deposit * account.interestRate) / 100)
     .filter((interest) => interest >= 1)
     .reduce((acc, int) => acc + int, 0);
 
   labelSumInterest.textContent = `${interest}€`;
 };
 
-calcDisplaySummary(account1.movements);
+// log in process
+const btnLogin = document.querySelector(".login__btn");
+const inputLoginUsername = document.querySelector(".login__input--user");
+const inputLoginPin = document.querySelector(".login__input--pin");
+const labelWelcome = document.querySelector(".welcome");
+
+let currentAccount;
+
+btnLogin.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  currentAccount = accounts.find(
+    (acc) => acc.username === inputLoginUsername.value
+  );
+
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    // display ui and welcome message
+    labelWelcome.textContent = `Welcome ${
+      currentAccount.owner.split(" ")[0]
+    } 👋`;
+
+    containerApp.style.opacity = 100;
+
+    // clear input fields
+    inputLoginUsername.value = inputLoginPin.value = "";
+    inputLoginPin.blur();
+
+    // display movements
+    displayMovements(currentAccount.movements);
+
+    // display balance
+    calcDisplayBalance(currentAccount.movements);
+
+    // display summary
+    calcDisplaySummary(currentAccount); // taking movements array and interestRate from account
+  }
+});
