@@ -196,3 +196,30 @@ btnClose.addEventListener("click", function (e) {
     labelWelcome.textContent = "Log in to get started";
   }
 });
+
+// loan process
+const btnLoan = document.querySelector(".form__btn--loan");
+const inputLoanAmount = document.querySelector(".form__input--loan-amount");
+
+/*
+Loan logic:
+
+if there is at least one deposit with at least 10% of the requested loan amount
+*/
+btnLoan.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+  const condition2 = currentAccount.movements.some(
+    (mov) => mov >= amount * 0.1
+  );
+
+  if (amount > 0 && condition2) {
+    // add movement
+    currentAccount.movements.push(amount);
+
+    // update ui
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = "";
+});
