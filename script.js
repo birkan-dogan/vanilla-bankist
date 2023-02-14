@@ -170,3 +170,29 @@ btnTransfer.addEventListener("click", function (e) {
     updateUI(currentAccount);
   }
 });
+
+// close account process
+const btnClose = document.querySelector(".form__btn--close");
+const inputCloseUsername = document.querySelector(".form__input--user");
+const inputClosePin = document.querySelector(".form__input--pin");
+
+btnClose.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    inputClosePin.value == currentAccount.pin
+  ) {
+    const index = accounts.findIndex(function (acc) {
+      return acc.username === currentAccount.username;
+    });
+
+    inputCloseUsername.value = inputClosePin.value = "";
+    // delete account
+    accounts.splice(index, 1);
+
+    // hide ui
+    containerApp.style.opacity = 0;
+    labelWelcome.textContent = "Log in to get started";
+  }
+});
