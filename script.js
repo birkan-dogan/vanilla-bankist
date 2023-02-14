@@ -31,6 +31,9 @@ const accounts = [account1, account2, account3, account4]; // to manipulate data
 
 const containerMovements = document.querySelector(".movements");
 const labelBalance = document.querySelector(".balance__value");
+const labelSumIn = document.querySelector(".summary__value--in");
+const labelSumOut = document.querySelector(".summary__value--out");
+const labelSumInterest = document.querySelector(".summary__value--interest");
 
 const displayMovements = function (movements) {
   movements.forEach(function (mov, index) {
@@ -41,7 +44,7 @@ const displayMovements = function (movements) {
           <div class="movements__type movements__type--${type}">${
       index + 1
     } ${type}</div>
-          <div class="movements__value">${mov}</div>
+          <div class="movements__value">${mov}€</div>
         </div>
       `;
 
@@ -76,3 +79,29 @@ const calcDisplayBalance = function (movements) {
 };
 
 calcDisplayBalance(account1.movements);
+
+calcDisplaySummary = function (movements) {
+  const incomes = movements
+    .filter((mov) => mov > 0)
+    .reduce(function (acc, currentValue) {
+      return acc + currentValue;
+    }, 0);
+  labelSumIn.textContent = `${incomes}€`;
+
+  const outcomes = movements
+    .filter((mov) => mov < 0)
+    .reduce(function (acc, currentValue) {
+      return acc + currentValue;
+    }, 0);
+  labelSumOut.textContent = `${Math.abs(outcomes)}€`;
+
+  const interest = movements
+    .filter((mov) => mov > 0)
+    .map((deposit) => (deposit * 1.2) / 100)
+    .filter((interest) => interest >= 1)
+    .reduce((acc, int) => acc + int, 0);
+
+  labelSumInterest.textContent = `${interest}€`;
+};
+
+calcDisplaySummary(account1.movements);
