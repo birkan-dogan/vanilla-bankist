@@ -36,8 +36,12 @@ const labelSumIn = document.querySelector(".summary__value--in");
 const labelSumOut = document.querySelector(".summary__value--out");
 const labelSumInterest = document.querySelector(".summary__value--interest");
 
-const displayMovements = function (movements) {
-  movements.forEach(function (mov, index) {
+const displayMovements = function (movements, sort = false) {
+  containerMovements.innerHTML = "";
+
+  const movs = sort ? [...movements].sort((a, b) => a - b) : movements;
+
+  movs.forEach(function (mov, index) {
     const type = mov > 0 ? "deposit" : "withdrawal";
 
     const html = `
@@ -222,4 +226,16 @@ btnLoan.addEventListener("click", function (e) {
     updateUI(currentAccount);
   }
   inputLoanAmount.value = "";
+});
+
+// to sort array ascending order
+const btnSort = document.querySelector(".btn--sort");
+
+let sorted = false;
+
+btnSort.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
