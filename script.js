@@ -62,6 +62,7 @@ const labelBalance = document.querySelector(".balance__value");
 const labelSumIn = document.querySelector(".summary__value--in");
 const labelSumOut = document.querySelector(".summary__value--out");
 const labelSumInterest = document.querySelector(".summary__value--interest");
+const labelTimer = document.querySelector(".timer");
 
 // displaying dates
 const formatMovementDate = function (date) {
@@ -167,6 +168,29 @@ const updateUI = function (currentAccount) {
   calcDisplaySummary(currentAccount); // taking movements array and interestRate from account
 };
 
+// logout timer
+const startLogOutTimer = function () {
+  let timer = 120;
+
+  const clock = setInterval(function () {
+    const min = String(Math.floor(timer / 60)).padStart(2, 0);
+    const sec = String(timer % 60).padStart(2, 0);
+
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (!timer) {
+      clearInterval(clock);
+      labelWelcome.textContent = "Log in to get started";
+      timer = 10;
+    }
+
+    // decrease 1s from timer
+    timer -= 1;
+  }, 1000);
+
+  return clock;
+};
+
 // log in process
 const btnLogin = document.querySelector(".login__btn");
 const inputLoginUsername = document.querySelector(".login__input--user");
@@ -177,6 +201,9 @@ let currentAccount;
 // default user
 currentAccount = account1;
 updateUI(currentAccount);
+
+// to avoid showing the same timer for other users
+let clock;
 
 btnLogin.addEventListener("click", function (e) {
   e.preventDefault();
@@ -196,6 +223,11 @@ btnLogin.addEventListener("click", function (e) {
     // clear input fields
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur();
+
+    if (clock) {
+      clearInterval(clock);
+    }
+    clock = startLogOutTimer();
 
     updateUI(currentAccount);
   }
@@ -229,6 +261,10 @@ btnTransfer.addEventListener("click", function (e) {
 
     // updating user interface
     updateUI(currentAccount);
+
+    // reset timer
+    clearInterval(clock);
+    clock = startLogOutTimer();
   }
 });
 
@@ -276,14 +312,20 @@ btnLoan.addEventListener("click", function (e) {
   );
 
   if (amount > 0 && condition2) {
-    // add movement
-    currentAccount.movements.push(amount);
+    setTimeout(function () {
+      // add movement
+      currentAccount.movements.push(amount);
 
-    // add transfer date
-    currentAccount.movementsDates.push(new Date());
+      // add transfer date
+      currentAccount.movementsDates.push(new Date());
 
-    // update ui
-    updateUI(currentAccount);
+      // update ui
+      updateUI(currentAccount);
+
+      // reset timer
+      clearInterval(clock);
+      clock = startLogOutTimer();
+    }, 2500);
   }
   inputLoanAmount.value = "";
 });
