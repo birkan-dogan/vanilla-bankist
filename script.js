@@ -6,14 +6,14 @@ const account1 = {
   pin: 1111,
 
   movementsDates: [
-    "2019-11-18T21:31:17.178Z",
-    "2019-12-23T07:42:02.383Z",
-    "2020-01-28T09:15:04.904Z",
-    "2020-04-01T10:17:24.185Z",
-    "2020-05-08T14:11:59.604Z",
-    "2020-05-27T17:01:17.194Z",
-    "2020-07-11T23:36:17.929Z",
-    "2020-07-12T10:51:36.790Z",
+    "2023-01-01T10:17:24.185Z",
+    "2023-01-18T21:31:17.178Z",
+    "2023-01-27T17:01:17.194Z",
+    "2023-02-11T23:36:17.929Z",
+    "2023-02-12T10:51:36.790Z",
+    "2023-02-14T14:11:59.604Z",
+    "2023-02-15T09:15:04.904Z",
+    "2023-02-17T07:42:02.383Z",
   ],
   currency: "EUR",
   locale: "pt-PT", // de-DE
@@ -26,14 +26,14 @@ const account2 = {
   pin: 2222,
 
   movementsDates: [
-    "2019-11-01T13:15:33.035Z",
-    "2019-11-30T09:48:16.867Z",
-    "2019-12-25T06:04:23.907Z",
-    "2020-01-25T14:18:46.235Z",
-    "2020-02-05T16:33:06.386Z",
-    "2020-04-10T14:43:26.374Z",
-    "2020-06-25T18:49:59.371Z",
-    "2020-07-26T12:01:20.894Z",
+    "2023-01-01T10:17:24.185Z",
+    "2023-01-18T21:31:17.178Z",
+    "2023-01-27T17:01:17.194Z",
+    "2023-02-11T23:36:17.929Z",
+    "2023-02-12T10:51:36.790Z",
+    "2023-02-14T14:11:59.604Z",
+    "2023-02-15T09:15:04.904Z",
+    "2023-02-17T07:42:02.383Z",
   ],
   currency: "USD",
   locale: "en-US",
@@ -63,6 +63,23 @@ const labelSumIn = document.querySelector(".summary__value--in");
 const labelSumOut = document.querySelector(".summary__value--out");
 const labelSumInterest = document.querySelector(".summary__value--interest");
 
+// displaying dates
+const formatMovementDate = function (date) {
+  const calcDaysPassed = function (date1, date2) {
+    return Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+  };
+
+  const daysPassed = calcDaysPassed(new Date(), date);
+
+  if (!daysPassed) return "Today";
+  if (daysPassed === 1) return "Yesterday";
+  if (daysPassed < 7) return `${daysPassed} days ago`;
+
+  const dateArr = date.toISOString().split("-");
+  return `${dateArr[2].slice(0, 2)}/${dateArr[1]}/${dateArr[0]}`;
+};
+
+// display movements
 const displayMovements = function (account, sort = false) {
   containerMovements.innerHTML = "";
 
@@ -74,9 +91,7 @@ const displayMovements = function (account, sort = false) {
     const type = mov > 0 ? "deposit" : "withdrawal";
 
     const date = new Date(account.movementsDates[index]);
-
-    const dateArr = date.toISOString().split("-");
-    displayDate = `${dateArr[2].slice(0, 2)}/${dateArr[1]}/${dateArr[0]}`;
+    const displayDate = formatMovementDate(date);
 
     const html = `
       <div class="movements__row">
